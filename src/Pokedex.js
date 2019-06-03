@@ -1,5 +1,5 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react'
+import styled from 'styled-components'
 
 const StyledPokedex = styled.div`
   margin-left: 50px;
@@ -39,18 +39,18 @@ const StyledPokedex = styled.div`
       }
     }
   }
-`;
+`
 
-function Card(props) {
+function Card (props) {
   return (
     <StyledPokedex>
-      <div className="nes-container with-title is-centered">
-        <p className="title">POKéDEX</p>
-        <div className="pokedex">
-          <div className="pokemon">
+      <div className='nes-container with-title is-centered'>
+        <p className='title'>POKéDEX</p>
+        <div className='pokedex'>
+          <div className='pokemon'>
             {props.isLoading ? (
               <div>
-                <i className="nes-pokeball" />
+                <i className='nes-pokeball' />
                 {props.catch ? (
                   <p>You are trying to catch a {props.catch}!</p>
                 ) : (
@@ -66,7 +66,7 @@ function Card(props) {
               )
             )}
           </div>
-          <div className="pokedex-info">
+          <div className='pokedex-info'>
             <p>Network: {props.network}</p>
             <p>
               Identity:
@@ -74,9 +74,9 @@ function Card(props) {
                 href={`https://${props.network}.etherscan.io/address/${
                   props.identity
                 }`}
-                className="breakline"
-                target="_blank"
-                rel="noopener noreferrer"
+                className='breakline'
+                target='_blank'
+                rel='noopener noreferrer'
               >
                 {props.identity}
               </a>
@@ -89,9 +89,9 @@ function Card(props) {
                     href={`https://${props.network}.etherscan.io/tx/${
                       props.transaction
                     }`}
-                    className="breakline"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    className='breakline'
+                    target='_blank'
+                    rel='noopener noreferrer'
                   >
                     {props.transaction}
                   </a>
@@ -102,7 +102,7 @@ function Card(props) {
         </div>
       </div>
     </StyledPokedex>
-  );
+  )
 }
 
-export default Card;
+export default Card

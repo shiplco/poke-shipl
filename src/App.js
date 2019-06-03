@@ -3,7 +3,7 @@ import Card from './Card'
 import Pokedex from './Pokedex'
 import styled from 'styled-components'
 import Web3 from 'web3'
-import shiplwallet from 'shipl-wallet'
+import Shiplwallet from 'shipl-wallet'
 
 const appId = '5fc6c72e-db33-4829-9a81-a4227b96238c'
 const targetContractAddress = '0x1c314cc1f12c6ae930385de21024cf32b63ffa0d'
@@ -160,32 +160,41 @@ class App extends React.Component {
       network: undefined,
       identity: undefined,
       catch: undefined,
+      shiplwallet: undefined,
       web3: undefined,
       contract: undefined
     }
 
+    this.getAccount = this.getAccount.bind(this)
     this.claimPokemon = this.claimPokemon.bind(this)
     this.pokedex = this.pokedex.bind(this)
   }
 
-  async componentDidMount () {
-    console.log(shiplwallet)
-    this.shiplwallet = await shiplwallet.create({ appId })
-    console.log(this.shiplwallet)
-    const web3 = new Web3(this.shiplwallet.getWeb3Provider())
+  async componentWillMount () {
+    const shiplwallet = await Shiplwallet.create({ appId })
+    const web3 = new Web3(shiplwallet.getWeb3Provider())
     const contract = new web3.eth.Contract(contractAbi, targetContractAddress)
     this.setState({
       web3,
       contract,
-      network: this.shiplwallet.shiplID.network,
-      identity: this.shiplwallet.shiplID.auth.identity
+      shiplwallet,
+      network: shiplwallet.shiplID.network,
+      identity: shiplwallet.shiplID.auth.identity
     })
-    this.pokedex()
+
+    if (shiplwallet.shiplID.auth.identity) {
+      this.pokedex()
+    }
+  }
+
+  async getAccount () {
+    const account = (await this.state.web3.eth.getAccounts())[0]
+    this.setState({ identity: this.state.shiplwallet.shiplID.auth.identity })
+    return account
   }
 
   async claimPokemon (pokeId) {
-    console.log(this.state)
-    const account = (await this.state.web3.eth.getAccounts())[0]
+    const account = await this.getAccount()
     this.state.contract.methods
       .claim(pokeId)
       .send({ from: account })
@@ -199,7 +208,7 @@ class App extends React.Component {
   };
 
   async pokedex () {
-    const account = (await this.state.web3.eth.getAccounts())[0]
+    const account = await this.getAccount()
     const pokeId = await this.state.contract.methods
       .owners(account)
       .call({ from: account })
@@ -270,6 +279,7 @@ class App extends React.Component {
               </div>
             </div>
           </section>
+
         </div>
         <footer>
           <p>
