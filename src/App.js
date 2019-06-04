@@ -287,6 +287,11 @@ class App extends React.Component {
             <a href='https://shipl.co' target='_blank' rel='noopener noreferrer'>
               shipl.co
             </a>{' '}
+            <span>-</span>
+            {' '}
+            <a href='https://github.com/shiplco/poke-shipl' target='_blank' rel='noopener noreferrer'>
+              See the code 💻 on github
+            </a>{' '}
           </p>
         </footer>
       </StyledApp>
