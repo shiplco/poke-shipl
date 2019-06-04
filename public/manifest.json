@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Poké Shipl",
+  "name": "Demo dapp integrated with the Shipl Wallet",
   "icons": [
     {
       "src": "favicon.ico",
