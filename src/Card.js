@@ -1,5 +1,5 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react'
+import styled from 'styled-components'
 
 const StyledCard = styled.div`
   margin: 15px;
@@ -12,22 +12,22 @@ const StyledCard = styled.div`
   i {
     margin-bottom: 10px;
   }
-`;
+`
 
-function Card(props) {
+function Card (props) {
   return (
     <StyledCard>
       <i className={props.item.picture} />
       <button
-        type="button"
-        className="nes-btn is-primary"
+        type='button'
+        className='nes-btn is-primary'
         onClick={() => props.claim(props.item.id)}
         style={{ height: 50, width: 200 }}
       >
         Choose
       </button>
     </StyledCard>
-  );
+  )
 }
 
-export default Card;
+export default Card
