@@ -142,7 +142,7 @@ const StyledApp = styled.div`
 
     p {
       line-height: 1.2;
-      font-size: 14px;
+      font-size: 12px;
     }
 
     h1 {
@@ -151,6 +151,15 @@ const StyledApp = styled.div`
 
     .nav-brand {
       margin: 0px 10px 0px 10px !important;
+    }
+
+    .nes-container {
+      padding: 1rem 1.2rem;
+    }
+
+    .pokedex-info {
+      padding-left: 10px;
+      margin-left: 10px;
     }
   }
 `;
