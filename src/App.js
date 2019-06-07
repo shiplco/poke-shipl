@@ -50,8 +50,7 @@ const StyledApp = styled.div`
   line-height: 1.5;
   color: #212529;
   text-align: left;
-  padding: 0 2rem;
-  margin: 0 2rem;
+  margin: 20px;
 
   header {
     position: fixed;
@@ -124,6 +123,7 @@ const StyledApp = styled.div`
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    flex-wrap: wrap;
   }
 
   footer {
