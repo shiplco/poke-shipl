@@ -2,8 +2,6 @@ import React from 'react'
 import styled from 'styled-components'
 
 const StyledPokedex = styled.div`
-  margin-left: 50px;
-
   .pokedex {
     display: flex;
     flex-direction: row;

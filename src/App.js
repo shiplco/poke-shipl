@@ -1,4 +1,5 @@
 import React from 'react'
+import ReactGA from 'react-ga'
 import Card from './Card'
 import Pokedex from './Pokedex'
 import styled from 'styled-components'
@@ -50,8 +51,7 @@ const StyledApp = styled.div`
   line-height: 1.5;
   color: #212529;
   text-align: left;
-  padding: 0 2rem;
-  margin: 0 2rem;
+  margin: 20px;
 
   header {
     position: fixed;
@@ -124,11 +124,44 @@ const StyledApp = styled.div`
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    flex-wrap: wrap;
   }
 
   footer {
     margin-top: 30px;
     text-align: center;
+  }
+
+  @media (max-width: 380px) {
+    .nes-prof,
+    .nes-bulbasaur,
+    .nes-charmander,
+    .nes-squirtle,
+    .nes-pokeball {
+      transform: scale(0.8);
+    }
+
+    p {
+      line-height: 1.2;
+      font-size: 12px;
+    }
+
+    h1 {
+      font-size: 1.5em;
+    }
+
+    .nav-brand {
+      margin: 0px 10px 0px 10px !important;
+    }
+
+    .nes-container {
+      padding: 1rem 1.2rem;
+    }
+
+    .pokedex-info {
+      padding-left: 10px;
+      margin-left: 10px;
+    }
   }
 `
 
@@ -187,6 +220,11 @@ class App extends React.Component {
     }
   }
 
+  componentDidMount () {
+    ReactGA.initialize('UA-136074649-4')
+    ReactGA.pageview(window.location.pathname + window.location.search)
+  }
+
   async getAccount () {
     const account = (await this.state.web3.eth.getAccounts())[0]
     this.setState({ identity: this.state.shiplwallet.shiplID.auth.identity })
@@ -205,7 +243,7 @@ class App extends React.Component {
       catch: cards[pokeId - 1].name,
       txHash: undefined
     })
-  };
+  }
 
   async pokedex () {
     const account = await this.getAccount()
@@ -214,7 +252,7 @@ class App extends React.Component {
       .call({ from: account })
     const poke = cards[pokeId.toNumber() - 1]
     this.setState({ poke, isLoading: false })
-  };
+  }
 
   render () {
     return (
@@ -262,6 +300,7 @@ class App extends React.Component {
               <section className='message-list'>
                 <section className='message -left'>
                   <img
+                    className='nes-prof'
                     src='https://vignette.wikia.nocookie.net/pokemontowerdefensetwo/images/c/cd/Professoroak_icon.png/revision/latest?cb=20130710043109'
                     alt=''
                   />
@@ -279,18 +318,24 @@ class App extends React.Component {
               </div>
             </div>
           </section>
-
         </div>
         <footer>
           <p>
             <span>©2019 </span>
-            <a href='https://shipl.co' target='_blank' rel='noopener noreferrer'>
+            <a
+              href='https://shipl.co'
+              target='_blank'
+              rel='noopener noreferrer'
+            >
               shipl.co
             </a>{' '}
-            <span>-</span>
-            {' '}
-            <a href='https://github.com/shiplco/poke-shipl' target='_blank' rel='noopener noreferrer'>
-              See the code 💻 on github
+            <span>-</span>{' '}
+            <a
+              href='https://github.com/shiplco/poke-shipl'
+              target='_blank'
+              rel='noopener noreferrer'
+            >
+              See the code <span role='img' aria-label='computer' aria-hidden>💻</span> on github
             </a>{' '}
           </p>
         </footer>
