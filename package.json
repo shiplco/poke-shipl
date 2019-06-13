@@ -9,6 +9,7 @@
     "nes.css": "^2.1.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-ga": "^2.5.7",
     "react-scripts": "3.0.0",
     "shipl-wallet": "^0.4.0",
     "styled-components": "^4.2.0",

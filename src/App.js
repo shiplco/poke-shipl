@@ -1,4 +1,5 @@
 import React from 'react'
+import ReactGA from 'react-ga'
 import Card from './Card'
 import Pokedex from './Pokedex'
 import styled from 'styled-components'
@@ -217,6 +218,11 @@ class App extends React.Component {
     if (shiplwallet.shiplID.auth.identity) {
       this.pokedex()
     }
+  }
+
+  componentDidMount () {
+    ReactGA.initialize('UA-136074649-4')
+    ReactGA.pageview(window.location.pathname + window.location.search)
   }
 
   async getAccount () {
