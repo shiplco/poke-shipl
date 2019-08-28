@@ -11,9 +11,11 @@
     "react-dom": "^16.8.6",
     "react-ga": "^2.5.7",
     "react-scripts": "3.0.0",
-    "shipl-wallet": "^0.4.0",
+    "react-typist": "^2.0.5",
+    "shipl-wallet": "^0.4.5",
     "styled-components": "^4.2.0",
-    "web3": "^1.0.0-beta.54"
+    "web3": "^1.0.0-beta.54",
+    "web3connect": "^1.0.0-beta.18"
   },
   "scripts": {
     "start": "react-scripts start",

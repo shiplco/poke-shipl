@@ -1,49 +1,24 @@
 import React from 'react'
 import ReactGA from 'react-ga'
+import styled from 'styled-components'
+import Shipl from 'shipl-wallet'
+import Web3Connect from 'web3connect'
+import Web3 from 'web3'
 import Card from './Card'
 import Pokedex from './Pokedex'
-import styled from 'styled-components'
-import Web3 from 'web3'
-import Shiplwallet from 'shipl-wallet'
+import TextBubble from './TextBubble'
+import CardEvolution from './CardEvolution'
+import contractAbi from './contractAbi'
 
-const appId = '5fc6c72e-db33-4829-9a81-a4227b96238c'
-const targetContractAddress = '0x1c314cc1f12c6ae930385de21024cf32b63ffa0d'
+import CharmanderEvolution from './img/charmander-evolution.png'
+import BalbasaurEvolution from './img/balbasaur-evolution.png'
+import SquirtleEvolution from './img/squirtle-evolution.png'
 
-const contractAbi = [
-  {
-    constant: true,
-    inputs: [
-      {
-        name: '',
-        type: 'address'
-      }
-    ],
-    name: 'owners',
-    outputs: [
-      {
-        name: '',
-        type: 'uint256'
-      }
-    ],
-    payable: false,
-    stateMutability: 'view',
-    type: 'function'
-  },
-  {
-    constant: false,
-    inputs: [
-      {
-        name: 'pokemon',
-        type: 'uint256'
-      }
-    ],
-    name: 'claim',
-    outputs: [],
-    payable: false,
-    stateMutability: 'nonpayable',
-    type: 'function'
-  }
-]
+const appId = 'kovan-ef6bd76f-28d7-428a-9c83-1bfedd681da5'
+// const appId = 'rinkeby-36c1be6f-15dc-4f91-88c1-fe5101af099c'
+// const appId = 'xdai-32bbb5ce-6083-4014-9d5b-d0dc4c93d931'
+// const targetContractAddress = '0x590583649EB5166291Ca48cDbEaB9468F0095a36' // xdai
+const targetContractAddress = '0xa0Dc4Ad26188ce6D8D9428EC0581D6a6310401f8' // kovan
 
 const StyledApp = styled.div`
   font-family: "Press Start 2P";
@@ -169,24 +144,44 @@ const cards = [
   {
     id: 1,
     name: 'Bulbasaur',
-    picture: 'nes-bulbasaur'
+    picture: 'nes-bulbasaur',
+    pictureEvolution: BalbasaurEvolution,
+    idEvolution: 11
   },
   {
     id: 2,
     name: 'Charmander',
-    picture: 'nes-charmander'
+    picture: 'nes-charmander',
+    pictureEvolution: CharmanderEvolution,
+    idEvolution: 22
   },
   {
     id: 3,
     name: 'Squirtle',
-    picture: 'nes-squirtle'
+    picture: 'nes-squirtle',
+    pictureEvolution: SquirtleEvolution,
+    idEvolution: 33
   }
 ]
+
+const web3Connect = new Web3Connect.Core({
+  providerOptions: {
+    portis: {
+      id: 'PORTIS_ID', // required
+      network: 'kovan' // optional
+    },
+    fortmatic: {
+      key: 'FORTMATIC_KEY', // required
+      network: 'kovan' // optional
+    }
+  }
+})
 
 class App extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
+      ownAPokemon: false,
       poke: undefined,
       isLoading: true,
       txHash: undefined,
@@ -200,44 +195,85 @@ class App extends React.Component {
 
     this.getAccount = this.getAccount.bind(this)
     this.claimPokemon = this.claimPokemon.bind(this)
+    this.claimEvolution = this.claimEvolution.bind(this)
     this.pokedex = this.pokedex.bind(this)
   }
 
-  async componentWillMount () {
-    const shiplwallet = await Shiplwallet.create({ appId })
+  chooseWeb3Provider () {
+    return new Promise((resolve, reject) => {
+      console.log('I am being called')
+      web3Connect.toggleModal() // open modal on button click
+      // subscibe to close
+      web3Connect.on('close', () => {
+        reject(new Error('Web3Connect Modal Closed')) // modal has closed
+      })
+      web3Connect.on('connect', (provider) => {
+        return resolve(provider)
+      })
+    })
+  }
+
+  async componentDidMount () {
+    const companyEmail = 'demo@shipl.co'
+    const companyName = 'Shipl'
+    const shiplwallet = await Shipl.create({ appId, companyEmail, companyName, provider: 'manual', web3Provider: window.ethereum, inputCallback: window.prompt })
+    // const shiplwallet = await Shipl.create({ appId, companyEmail, companyName, provider: 'web3Connect', web3Fallback: this.chooseWeb3Provider, inputCallback: window.prompt })
     const web3 = new Web3(shiplwallet.getWeb3Provider())
     const contract = new web3.eth.Contract(contractAbi, targetContractAddress)
     this.setState({
       web3,
       contract,
       shiplwallet,
-      network: shiplwallet.shiplID.network,
-      identity: shiplwallet.shiplID.auth.identity
+      network: shiplwallet.getNetwork(),
+      identity: shiplwallet.getIdentity()
+      // identity: shiplwallet.shiplID.auth.identity
     })
 
-    if (shiplwallet.shiplID.auth.identity) {
-      this.pokedex()
+    if (shiplwallet.getIdentity()) {
+      await this.pokedex()
+    } else {
+      this.setState({ textBubble: TextBubble({ text: 'RED, Shipl sponsor you the gas cost of this transaction. Which POKEMON do you want?' }) })
     }
-  }
-
-  componentDidMount () {
     ReactGA.initialize('UA-136074649-4')
     ReactGA.pageview(window.location.pathname + window.location.search)
   }
 
   async getAccount () {
     const account = (await this.state.web3.eth.getAccounts())[0]
-    this.setState({ identity: this.state.shiplwallet.shiplID.auth.identity })
+    console.log('account', account)
+    // this.setState({ identity: this.state.shiplwallet.shiplID.auth.identity })
+    this.setState({ identity: this.state.shiplwallet.getIdentity() })
     return account
   }
 
   async claimPokemon (pokeId) {
+    console.log('claimPokemin')
     const account = await this.getAccount()
+    console.log('CLAIM.account', account)
     this.state.contract.methods
       .claim(pokeId)
       .send({ from: account })
       .on('transactionHash', txHash => this.setState({ txHash }))
-      .on('confirmation', () => this.pokedex())
+      .on('confirmation', (confirmation) => {
+        if (confirmation === 1) this.pokedex()
+      })
+    this.setState({
+      isLoading: true,
+      catch: cards[pokeId - 1].name,
+      txHash: undefined
+    })
+  }
+
+  async claimEvolution (pokeId, pokeIdEvolution) {
+    const TX_VALUE = '1000000000000000000'
+    const account = await this.getAccount()
+    this.state.contract.methods
+      .evolvePokemon(pokeIdEvolution, TX_VALUE)
+      .send({ from: account, value: TX_VALUE })
+      .on('transactionHash', txHash => this.setState({ txHash }))
+      .on('confirmation', (confirmation) => {
+        if (confirmation === 1) this.pokedex()
+      })
     this.setState({
       isLoading: true,
       catch: cards[pokeId - 1].name,
@@ -250,8 +286,20 @@ class App extends React.Component {
     const pokeId = await this.state.contract.methods
       .owners(account)
       .call({ from: account })
-    const poke = cards[pokeId.toNumber() - 1]
-    this.setState({ poke, isLoading: false })
+    const pokeIdNumber = pokeId.toNumber()
+    let cardIndex = pokeIdNumber - 1
+    let poke = cards[cardIndex]
+    if (pokeIdNumber === 11 || pokeIdNumber === 22 || pokeIdNumber === 33) {
+      cardIndex = Math.round(pokeIdNumber / 10) - 1
+      poke = cards[cardIndex]
+      this.setState({ poke, isLoading: false, ownAPokemon: true, textBubble: null, ownAEvolution: true })
+      this.setState({ textBubble: TextBubble({ text: 'RED you already have a POKEMON Evolution! Try other ones!' }) })
+    } else if (pokeIdNumber === 1 || pokeIdNumber === 2 || pokeIdNumber === 3) {
+      this.setState({ poke, isLoading: false, ownAPokemon: true, textBubble: null, ownAEvolution: false })
+      this.setState({ textBubble: TextBubble({ text: 'RED, you can now for 1$ evolve your POKEMON.' }) })
+    } else {
+      this.setState({ textBubble: TextBubble({ text: 'RED, Shipl sponsor you the gas cost of this transaction. Which POKEMON do you want?' }) })
+    }
   }
 
   render () {
@@ -285,6 +333,7 @@ class App extends React.Component {
               </p>
             </div>
             <Pokedex
+              ownAEvolution={this.state.ownAEvolution}
               network={this.state.network}
               catch={this.state.catch}
               pokemon={this.state.poke}
@@ -302,14 +351,22 @@ class App extends React.Component {
                   <img
                     className='nes-prof'
                     src='https://vignette.wikia.nocookie.net/pokemontowerdefensetwo/images/c/cd/Professoroak_icon.png/revision/latest?cb=20130710043109'
-                    alt=''
+                    alt='Nes professor'
                   />
                   <div className='nes-balloon from-left'>
-                    <p>Now, RED, which POKEMON do you want?</p>
+                    {this.state.textBubble}
                   </div>
                 </section>
               </section>
               <div className='nes-container is-rounded'>
+                {this.state.ownAPokemon && !this.state.ownAEvolution &&
+                  <CardEvolution
+                    pictureEvolution={this.state.poke.pictureEvolution}
+                    claimEvolution={this.claimEvolution}
+                    id={this.state.poke.id}
+                    idEvolution={this.state.poke.idEvolution}
+                  />
+                }
                 <div className='card-board'>
                   {cards.map(e => (
                     <Card key={e.name} item={e} claim={this.claimPokemon} />
