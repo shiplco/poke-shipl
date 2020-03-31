@@ -21,8 +21,10 @@ function Card (props) {
       <button
         type='button'
         className='nes-btn is-primary'
+        id={'claim-button-' + props.item.id}
         onClick={() => props.claim(props.item.id)}
         style={{ height: 50, width: 200 }}
+        disabled={props.disabled}
       >
         Choose
       </button>

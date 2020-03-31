@@ -17,12 +17,15 @@ const StyledCard = styled.div`
 function Card (props) {
   return (
     <StyledCard>
-      <img style={{ maxWidth: '200px' }} src={props.pictureEvolution} />
+      <img style={{ maxWidth: '200px' }} src={props.pictureEvolution} alt='This is an evolution of a Pokemon' />
       <button
         type='button'
         className='nes-btn is-primary'
+        id={'evolve-button-' + props.id}
         onClick={() => props.claimEvolution(props.id, props.idEvolution)}
-        style={{ height: 50, width: 200 }}>
+        style={{ height: 50, width: 200 }}
+        disabled={props.disabled}
+      >
         Evolve
       </button>
     </StyledCard>
