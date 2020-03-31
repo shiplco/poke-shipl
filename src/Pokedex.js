@@ -52,26 +52,30 @@ function Card (props) {
                 {props.catch ? (
                   <p>You are trying to catch a {props.catch}!</p>
                 ) : (
-                  <p>Your pokemon is on the way!</p>
+                  <p>Catch your Pokemon!</p>
                 )}
               </div>
             ) : (
               props.pokemon && (
                 <div>
-                  <i className={props.pokemon.picture} />
+                  {props.ownAEvolution
+                    ? <img src={props.pokemon.pictureEvolution} alt='This is a Pokemon' />
+                    : <i className={props.pokemon.picture} />}
                   <p>{props.pokemon.name}</p>
                 </div>
               )
             )}
           </div>
           <div className='pokedex-info'>
-            <p>Network: {props.network}</p>
-            <p>
+            <p id='pokedex-info-network'>Network: {props.network}</p>
+            <p id='pokedex-info-identity'>
               Identity:
               <a
-                href={`https://${props.network}.etherscan.io/address/${
-                  props.identity
-                }`}
+                href={
+                  props.network === 'mainnet'
+                    ? `https://etherscan.io/address/${props.identity}`
+                    : `https://${props.network}.etherscan.io/address/${props.identity}`
+                }
                 className='breakline'
                 target='_blank'
                 rel='noopener noreferrer'
@@ -81,12 +85,14 @@ function Card (props) {
             </p>
             <div>
               {props.transaction && (
-                <p>
+                <p id='pokedex-info-transaction'>
                   Transaction:
                   <a
-                    href={`https://${props.network}.etherscan.io/tx/${
-                      props.transaction
-                    }`}
+                    href={
+                      props.network === 'mainnet'
+                        ? `https://etherscan.io/tx/${props.transaction}`
+                        : `https://${props.network}.etherscan.io/tx/${props.transaction}`
+                    }
                     className='breakline'
                     target='_blank'
                     rel='noopener noreferrer'
