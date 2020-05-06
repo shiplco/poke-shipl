@@ -14,7 +14,9 @@ import BalbasaurEvolution from './img/balbasaur-evolution.png'
 import SquirtleEvolution from './img/squirtle-evolution.png'
 
 const appId = 'kovan-821c17fe-df90-4250-a61f-3ea6f59d5f59'
-const targetContractAddress = '0x87Dc39A69D0E86840632cFae9Fc9d14325Aa39C2'
+// const appId = 'mainnet-d042cc09-3e88-46c2-84b1-cdeed0fa9292'
+const targetContractAddress = '0x87Dc39A69D0E86840632cFae9Fc9d14325Aa39C2' // kovan
+// const targetContractAddress = '0x91ee14f66dc96449b241799f7313ae147c54baa2' // mainnet
 
 const cards = [
   {
@@ -52,10 +54,11 @@ class App extends React.Component {
       network: undefined,
       identity: undefined,
       catch: undefined,
-      shiplwallet: undefined,
+      shipl: undefined,
       web3: undefined,
       eth: undefined,
-      contract: undefined
+      contract: undefined,
+      isLoggedIn: undefined
     }
 
     this.getAccount = this.getAccount.bind(this)
@@ -65,18 +68,31 @@ class App extends React.Component {
   }
 
   async componentDidMount () {
-    const shiplwallet = await Shipl.create({ appId, provider: 'shiplwallet' })
-    const web3 = new Web3(shiplwallet.getWeb3Provider())
+    this.shipl = await Shipl.create({ appId, provider: 'shiplwallet' })
+    this.shipl.events.once('loaded', async () => {
+      const isLoggedIn = await this.shipl.isLoggedIn()
+      this.setState({
+        isLoggedIn
+      }, () => {
+        console.log(this.state)
+      })
+    })
+    this.shipl.events.on('auth', async (payload) => {
+      this.setState({
+        isLoggedIn: payload.isLoggedIn
+      })
+    })
+    const web3 = new Web3(this.shipl.getWeb3Provider())
     const contract = new web3.eth.Contract(contractAbi, targetContractAddress)
     this.setState({
       web3,
       contract,
-      shiplwallet,
-      network: shiplwallet.getNetwork(),
-      identity: shiplwallet.getIdentity()
+      shipl: this.shipl,
+      network: this.shipl.getNetwork(),
+      identity: this.shipl.getIdentity()
     })
 
-    if (shiplwallet.getIdentity()) {
+    if (this.shipl.getIdentity()) {
       await this.pokedex()
     } else {
       this.setState({ textBubble: TextBubble({ text: 'RED, Shipl pay for the gas cost of this transaction. Which POKEMON do you want?' }) })
@@ -85,16 +101,31 @@ class App extends React.Component {
     ReactGA.pageview(window.location.pathname + window.location.search)
   }
 
+  async logout () {
+    await this.shipl.logout()
+    this.setState({
+      ownAPokemon: false,
+      ownAEvolution: false,
+      poke: undefined,
+      isLoading: true,
+      txHash: undefined,
+      network: this.shipl.getNetwork(),
+      catch: undefined,
+      eth: undefined,
+      isLoggedIn: undefined,
+      identity: undefined
+    })
+  }
+
   async getAccount () {
     const account = (await this.state.web3.eth.getAccounts())[0]
-    this.setState({ identity: this.state.shiplwallet.getIdentity() })
+    this.setState({ identity: this.state.shipl.getIdentity() })
     return account
   }
 
   async claimPokemon (pokeId) {
     const account = await this.getAccount()
-    this.state.contract.methods
-      .claim(pokeId)
+    this.state.contract.methods.claim(pokeId)
       .send({ from: account })
       .on('transactionHash', txHash => this.setState({ txHash }))
       .on('confirmation', (confirmation) => {
@@ -120,6 +151,9 @@ class App extends React.Component {
       .on('confirmation', (confirmation) => {
         if (confirmation === 1) this.pokedex()
       })
+      .on('error', error => {
+        console.error(error)
+      })
     this.setState({
       isLoading: true,
       catch: cards[pokeId - 1].name,
@@ -129,18 +163,15 @@ class App extends React.Component {
 
   async pokedex () {
     const account = await this.getAccount()
-    const pokeId = await this.state.contract.methods
-      .owners(account)
-      .call({ from: account })
-    const pokeIdNumber = pokeId.toNumber()
-    let cardIndex = pokeIdNumber - 1
+    const pokeId = parseInt(await this.state.contract.methods.owners(account).call())
+    let cardIndex = pokeId - 1
     let poke = cards[cardIndex]
-    if (pokeIdNumber === 11 || pokeIdNumber === 22 || pokeIdNumber === 33) {
-      cardIndex = Math.round(pokeIdNumber / 10) - 1
+    if (pokeId === 11 || pokeId === 22 || pokeId === 33) {
+      cardIndex = Math.round(pokeId / 10) - 1
       poke = cards[cardIndex]
       this.setState({ poke, isLoading: false, ownAPokemon: true, textBubble: null, ownAEvolution: true })
       this.setState({ textBubble: TextBubble({ text: 'RED you already have a POKEMON Evolution! Try other ones!' }) })
-    } else if (pokeIdNumber === 1 || pokeIdNumber === 2 || pokeIdNumber === 3) {
+    } else if (pokeId === 1 || pokeId === 2 || pokeId === 3) {
       this.setState({ poke, isLoading: false, ownAPokemon: true, textBubble: null, ownAEvolution: false })
       this.setState({ textBubble: TextBubble({ text: 'RED, you can now for 1$ evolve your POKEMON.' }) })
     } else {
@@ -161,6 +192,10 @@ class App extends React.Component {
                 </h1>
               </a>
               <p>A blockchain-less experience.</p>
+            </div>
+            <div>{this.state.isLoggedIn
+              ? <button onClick={async () => this.logout()}>Logout</button>
+              : null}
             </div>
           </div>
         </header>

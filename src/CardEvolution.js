@@ -24,8 +24,7 @@ function Card (props) {
         id={'evolve-button-' + props.id}
         onClick={() => props.claimEvolution(props.id, props.idEvolution)}
         style={{ height: 50, width: 200 }}
-        disabled={props.disabled}
-      >
+        disabled={props.disabled}>
         Evolve
       </button>
     </StyledCard>
