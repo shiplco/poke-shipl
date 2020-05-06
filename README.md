@@ -4,7 +4,7 @@
 This the reference implementation of the shipl-wallet sdk. We have created Poké Shipl to show the frictioneless experience delivered by [Shipl](https://shipl.co). Play with Poké Shipl at [demo.shipl.co](https://demo.shipl.co) 
 
 
-For a more in depth guide, check out our [documentation](https://docs.shipl.co) site or clone this repository.
+For a more in depth guide, check out our [documentation](https://docs.shipl.co/sdk) site or clone this repository.
 
 ## Run it locally
 

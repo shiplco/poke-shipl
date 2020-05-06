@@ -66,43 +66,46 @@ function Card (props) {
               )
             )}
           </div>
-          <div className='pokedex-info'>
-            <p id='pokedex-info-network'>Network: {props.network}</p>
-            <p id='pokedex-info-identity'>
-              Identity:
-              <a
-                href={
-                  props.network === 'mainnet'
-                    ? `https://etherscan.io/address/${props.identity}`
-                    : `https://${props.network}.etherscan.io/address/${props.identity}`
-                }
-                className='breakline'
-                target='_blank'
-                rel='noopener noreferrer'
-              >
-                {props.identity}
-              </a>
-            </p>
-            <div>
-              {props.transaction && (
-                <p id='pokedex-info-transaction'>
-                  Transaction:
-                  <a
-                    href={
-                      props.network === 'mainnet'
-                        ? `https://etherscan.io/tx/${props.transaction}`
-                        : `https://${props.network}.etherscan.io/tx/${props.transaction}`
-                    }
-                    className='breakline'
-                    target='_blank'
-                    rel='noopener noreferrer'
-                  >
-                    {props.transaction}
-                  </a>
-                </p>
-              )}
-            </div>
-          </div>
+          {props.identity && (
+            <div className='pokedex-info'>
+              <p id='pokedex-info-network'>- The blockchain is {props.network}</p>
+              <p id='pokedex-info-identity'>- View your {' '}
+                <a
+                  href={
+                    props.network === 'mainnet'
+                      ? `https://etherscan.io/address/${props.identity}`
+                      : `https://${props.network}.etherscan.io/address/${props.identity}`
+                  }
+                  className='breakline'
+                  target='_blank'
+                  style={{ fontSize: '16px' }}
+                  rel='noopener noreferrer'
+                >identity
+                </a>
+                {' '} on etherscan
+              </p>
+              <div>
+                {props.transaction && (
+                  <p id='pokedex-info-transaction'>
+                  - View your {' '}
+                    <a
+                      href={
+                        props.network === 'mainnet'
+                          ? `https://etherscan.io/tx/${props.transaction}`
+                          : `https://${props.network}.etherscan.io/tx/${props.transaction}`
+                      }
+                      className='breakline'
+                      target='_blank'
+                      style={{ fontSize: '16px' }}
+                      rel='noopener noreferrer'
+                    >
+                    transaction
+                    </a>
+                    {' '}on etherscan
+                  </p>
+                )}
+              </div>
+            </div>)}
         </div>
       </div>
     </StyledPokedex>
