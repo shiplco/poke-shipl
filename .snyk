@@ -1,0 +1,36 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.14.1
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  SNYK-JS-LODASH-567746:
+    - styled-components > @babel/traverse > lodash:
+        patched: '2020-05-07T07:33:36.922Z'
+    - styled-components > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash:
+        patched: '2020-05-07T07:33:36.922Z'
+    - styled-components > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash:
+        patched: '2020-05-07T07:33:36.922Z'
+    - shipl > web3-provider-engine > eth-json-rpc-middleware > ethereumjs-block > async > lodash:
+        patched: '2020-05-07T07:33:36.922Z'
+    - shipl > web3-provider-engine > eth-json-rpc-middleware > ethereumjs-vm > async > lodash:
+        patched: '2020-05-07T07:33:36.922Z'
+    - shipl > web3-provider-engine > eth-json-rpc-middleware > json-rpc-engine > async > lodash:
+        patched: '2020-05-07T07:33:36.922Z'
+    - shipl > web3-provider-engine > eth-json-rpc-filters > json-rpc-engine > async > lodash:
+        patched: '2020-05-07T07:33:36.922Z'
+    - shipl > web3-provider-engine > eth-block-tracker > @babel/plugin-transform-runtime > @babel/helper-module-imports > @babel/types > lodash:
+        patched: '2020-05-07T07:33:36.922Z'
+    - shipl > web3-provider-engine > eth-json-rpc-filters > eth-json-rpc-middleware > ethereumjs-block > async > lodash:
+        patched: '2020-05-07T07:33:36.922Z'
+    - shipl > web3-provider-engine > eth-json-rpc-middleware > ethereumjs-vm > async-eventemitter > async > lodash:
+        patched: '2020-05-07T07:33:36.922Z'
+    - shipl > web3-provider-engine > eth-json-rpc-middleware > ethereumjs-vm > ethereumjs-block > async > lodash:
+        patched: '2020-05-07T07:33:36.922Z'
+    - shipl > web3-provider-engine > eth-json-rpc-filters > eth-json-rpc-middleware > ethereumjs-vm > async > lodash:
+        patched: '2020-05-07T07:33:36.922Z'
+    - shipl > web3-provider-engine > eth-json-rpc-filters > eth-json-rpc-middleware > json-rpc-engine > async > lodash:
+        patched: '2020-05-07T07:33:36.922Z'
+    - shipl > web3-provider-engine > eth-json-rpc-filters > eth-json-rpc-middleware > ethereumjs-vm > async-eventemitter > async > lodash:
+        patched: '2020-05-07T07:33:36.922Z'
+    - shipl > web3-provider-engine > eth-json-rpc-filters > eth-json-rpc-middleware > ethereumjs-vm > ethereumjs-block > async > lodash:
+        patched: '2020-05-07T07:33:36.922Z'

@@ -13,14 +13,17 @@
     "react-typist": "^2.0.5",
     "shipl": "^2.1.16",
     "styled-components": "^4.2.0",
-    "web3": "^1.2.6"
+    "web3": "^1.2.6",
+    "snyk": "^1.319.1"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "node test/puppeteer",
     "eject": "react-scripts eject",
-    "deploy": "npm run build && surge build poke-shipl.surge.sh"
+    "deploy": "npm run build && surge build poke-shipl.surge.sh",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -44,5 +47,6 @@
     "request": "^2.88.2",
     "request-promise": "^4.2.5",
     "webpack-cli": "^3.3.11"
-  }
+  },
+  "snyk": true
 }
