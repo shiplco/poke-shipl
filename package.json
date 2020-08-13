@@ -9,7 +9,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-ga": "^2.5.7",
-    "react-scripts": "^3.4.1",
+    "react-scripts": "^3.4.3",
     "react-typist": "^2.0.5",
     "shipl": "^2.1.16",
     "styled-components": "^4.2.0",
